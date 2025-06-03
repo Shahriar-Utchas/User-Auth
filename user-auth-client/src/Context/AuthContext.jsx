@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
   const checkAuth = async () => {
     try {
       setAuthLoading(true);
-      const res = await axios.get('http://localhost:3000/api/auth/verify', { withCredentials: true });
+      const res = await axios.get('https://user-auth-server-theta.vercel.app/api/auth/verify', { withCredentials: true });
       if (res.status === 200) setIsAuthenticated(true);
     } catch (error) {
       setIsAuthenticated(false);

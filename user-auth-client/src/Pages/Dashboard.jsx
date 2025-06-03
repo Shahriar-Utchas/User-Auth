@@ -11,7 +11,7 @@ const Dashboard = () => {
 
     useEffect(() => {
         axios
-            .get('http://localhost:3000/api/auth/verify', { withCredentials: true })
+            .get('https://user-auth-server-theta.vercel.app/api/auth/verify', { withCredentials: true })
             .then((res) => {
                 setUser(res.data.user);
                 setLoading(false);
@@ -33,7 +33,7 @@ const Dashboard = () => {
         });
         if (result.isConfirmed) {
             try {
-                await axios.post('http://localhost:3000/api/auth/logout', {}, { withCredentials: true });
+                await axios.post('https://user-auth-server-theta.vercel.app//api/auth/logout', {}, { withCredentials: true });
                 setUser(null);
                 navigate('/');
             } catch (error) {

@@ -108,7 +108,7 @@ const SignUp = () => {
         setErrors((prev) => ({ ...prev, global: '' }));
 
         try {
-            await axios.post('http://localhost:3000/api/auth/signup', {
+            await axios.post('https://user-auth-server-theta.vercel.app/api/auth/signup', {
                 username: formData.username,
                 password: formData.password,
                 shops: validShops,
