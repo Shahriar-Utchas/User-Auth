@@ -2,15 +2,23 @@ const express = require('express')
 const cors = require('cors')
 require('dotenv').config()
 const app = express()
+const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
 const port = process.env.PORT || 3000
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: ['http://localhost:5173'], 
+    credentials: true,
+}));
 app.use(express.json());
+app.use(cookieParser());
+
 
 app.get('/', (req, res) => {
   res.send('Welcome')
 })
+
 
 //MongoDB Connection
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
@@ -31,6 +39,8 @@ async function run() {
     const database = client.db('User-Auth');
     const userCollection = database.collection('user-register');
 
+
+// Signup
 app.post('/api/auth/signup', async (req, res) => {
   try {
     const { username, password, shops } = req.body;
@@ -78,6 +88,69 @@ app.post('/api/auth/signup', async (req, res) => {
   }
 });
 
+
+//signin
+app.post('/api/auth/signin', async (req, res) => {
+  try {
+    const { username, password, rememberMe } = req.body;
+
+    const user = await userCollection.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (user.password !== password) {
+      return res.status(401).json({ message: 'Incorrect password' });
+    }
+
+    const payload = {
+      id: user._id,
+      username: user.username,
+      shops: user.shops,
+    };
+
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: rememberMe ? '7d' : '30m',
+    });
+
+    // Set cookie options
+    const cookieOptions = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'None', //  cross-subdomain auth
+     maxAge: rememberMe ? 7 * 24 * 60 * 60 * 1000 : 30 * 60 * 1000, //7 days or 30 mins
+};
+
+
+    // Set the cookie
+    res.cookie('token', token, cookieOptions);
+
+    // Send response without token (or keep it if you want)
+    res.status(200).json({
+      message: 'Login successful',
+      user: {
+        username: user.username,
+        shops: user.shops,
+      },
+    });
+  } catch (error) {
+    console.error('Signin error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// verify JWT token
+app.get('/api/auth/verify', (req, res) => {
+  const token = req.cookies.token;
+  if (!token) return res.status(401).json({ message: 'Unauthorized' });
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    res.status(200).json({ user: decoded });
+  } catch (err) {
+    res.status(401).json({ message: 'Invalid or expired token' });
+  }
+});
 
 
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 
 const SignIn = () => {
     const [formData, setFormData] = useState({
@@ -10,6 +10,8 @@ const SignIn = () => {
     });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -25,11 +27,10 @@ const SignIn = () => {
         setLoading(true);
 
         try {
-            const res = await axios.post('http://localhost:5000/api/auth/signin', formData, {
+            const res = await axios.post('http://localhost:3000/api/auth/signin', formData, {
                 withCredentials: true,
             });
-
-            window.location.href = '/dashboard';
+            navigate('/dashboard');
         } catch (err) {
             if (err.response && err.response.data && err.response.data.message) {
                 setError(err.response.data.message);
