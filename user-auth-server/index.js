@@ -116,16 +116,11 @@ app.post('/api/auth/signin', async (req, res) => {
     // Set cookie options
     const cookieOptions = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'None', //  cross-subdomain auth
-     maxAge: rememberMe ? 7 * 24 * 60 * 60 * 1000 : 30 * 60 * 1000, //7 days or 30 mins
+    secure: false,
 };
-
-
     // Set the cookie
     res.cookie('token', token, cookieOptions);
 
-    // Send response without token (or keep it if you want)
     res.status(200).json({
       message: 'Login successful',
       user: {
@@ -139,7 +134,7 @@ app.post('/api/auth/signin', async (req, res) => {
   }
 });
 
-// verify JWT token
+
 app.get('/api/auth/verify', (req, res) => {
   const token = req.cookies.token;
   if (!token) return res.status(401).json({ message: 'Unauthorized' });
@@ -152,6 +147,14 @@ app.get('/api/auth/verify', (req, res) => {
   }
 });
 
+//logout
+app.post('/api/auth/logout', (req, res) => {
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: false,
+  });
+  res.status(200).json({ message: 'Logged out successfully' });
+});
 
 
     // Send a ping to confirm a successful connection
