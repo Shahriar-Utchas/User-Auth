@@ -1,8 +1,8 @@
 # ⚙️ Auth Client - MERN Stack Authentication Frontend
 
-## 🔗 Live Client: [https://your-auth-client.vercel.app](https://your-auth-client.vercel.app)
+## 🔗 Live Client: [https://user-auth-client-9am.vercel.app](https://user-auth-client-9am.vercel.app)
 
----
+
 
 ## 🧠 About the Project
 

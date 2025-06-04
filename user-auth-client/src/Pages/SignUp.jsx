@@ -2,9 +2,12 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router';
 import Swal from 'sweetalert2';
+import useAxiosSecure from '../Hooks/useAxiosSecure';
 
 const SignUp = () => {
     const navigate = useNavigate();
+    const axiosSecure = useAxiosSecure();
+
 
     const [formData, setFormData] = useState({
         username: '',
@@ -108,7 +111,7 @@ const SignUp = () => {
         setErrors((prev) => ({ ...prev, global: '' }));
 
         try {
-            await axios.post('https://user-auth-server-theta.vercel.app/api/auth/signup', {
+            await axiosSecure.post('/signup', {
                 username: formData.username,
                 password: formData.password,
                 shops: validShops,

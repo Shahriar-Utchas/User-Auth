@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router';
+import useAxiosSecure from '../Hooks/useAxiosSecure';
 
 const SignIn = () => {
     const [formData, setFormData] = useState({
@@ -8,9 +9,12 @@ const SignIn = () => {
         password: '',
         rememberMe: false,
     });
+
+    const axiosSecure = useAxiosSecure();
+
+
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -27,16 +31,16 @@ const SignIn = () => {
         setLoading(true);
 
         try {
-            const res = await axios.post('https://user-auth-server-theta.vercel.app/api/auth/signin', formData, {
-                withCredentials: true,
+            const response = await axiosSecure.post('/signin', {
+                username: formData.username,
+                password: formData.password,
+                rememberMe: formData.rememberMe,
             });
+            console.log('Login success:', response.data);
             navigate('/dashboard');
-        } catch (err) {
-            if (err.response && err.response.data && err.response.data.message) {
-                setError(err.response.data.message);
-            } else {
-                setError('An unexpected error occurred.');
-            }
+        } catch (error) {
+            setError(error.response?.data?.message || 'Login failed');
+            console.error('Login error:', error);
         } finally {
             setLoading(false);
         }
@@ -103,13 +107,13 @@ const SignIn = () => {
                     >
                         {loading ? 'Signing in...' : 'Sign In'}
                     </button>
+
                     <div className="mt-4 text-center">
                         <span className="text-gray-600">Don't have an account? </span>
                         <Link to="/signup" className="text-blue-600 hover:underline font-medium">
                             Sign Up
                         </Link>
                     </div>
-
                 </form>
             </div>
         </div>

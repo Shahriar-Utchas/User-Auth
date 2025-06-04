@@ -4,7 +4,6 @@ import {
 import SignIn from "../Pages/SignIn";
 import SignUp from "../Pages/SignUp";
 import Dashboard from "../Pages/Dashboard";
-import PrivateRoute from "../Context/PrivateRoute";
 import ShopPage from "../Pages/ShopPage";
 
 
@@ -19,10 +18,10 @@ export const router = createBrowserRouter([
     },
     {
         path: "/dashboard",
-        element: <PrivateRoute><Dashboard></Dashboard></PrivateRoute>,
+        element: <Dashboard></Dashboard>,
     },
     {
         path: "/dashboard/:shopName",
-        element: <PrivateRoute><ShopPage></ShopPage></PrivateRoute>,
+        element: <ShopPage></ShopPage>,
     }
 ]);
