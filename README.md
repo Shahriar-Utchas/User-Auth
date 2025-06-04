@@ -6,8 +6,8 @@ This is a full-stack MERN application built to manage secure user authentication
 
 ## 🔗 Live Demo
 
-- 🌐 **Frontend**: [https://your-frontend.vercel.app](https://user-auth-client-9am.vercel.app)
-- 🛠 **Backend**: [https://your-backend.vercel.app](https://user-auth-server-theta.vercel.app)
+- 🌐 **Frontend**: [https://user-auth-client-9am.vercel.app](https://user-auth-client-9am.vercel.app)
+- 🛠 **Backend**: [https://user-auth-server-theta.vercel.app](https://user-auth-server-theta.vercel.app)
 
 ---
 
