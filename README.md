@@ -46,8 +46,6 @@ This is a full-stack MERN application built to manage secure user authentication
 ---
 
 ### 🏪 4. Shop-Specific Dashboards (Dynamic Subdomains)
-- Clicking a shop redirects to:  
-  `http://<shopname>.localhost:5173`
 - Displays:  
   `"This is <shopname> shop"`
 - Works if opened directly in a new tab

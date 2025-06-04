@@ -41,17 +41,7 @@ This is the **frontend** for a secure authentication system built with **React (
 | `/signup`                    | User registration page                      |
 | `/signin`                    | User login page                             |
 | `/dashboard`                 | Main user dashboard                         |
-| `http://<shop>.localhost:5173` | Shop-specific dashboard (dynamic subdomain) |
+| `http://localhost:5173/shopname` | Shop-specific dashboard (dynamic subdomain) |
 
 ---
 
-## 📁 Folder Structure
-client/
-├── src/
-│ ├── pages/ # Signup, Signin, Dashboard, Shop
-│ ├── Context/ # Auth context
-│ ├── Routes/ # Routes setup , private routes
-│ ├── main.jsx
-├── public/
-├── .env
-├── package.json

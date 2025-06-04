@@ -18,10 +18,9 @@ app.get('/', (req, res) => {
   res.send('Welcome');
 });
 
-// Middleware to check JWT token
+// JWT verification middleware
 const verifyJWT = (req, res, next) => {
   const token = req.cookies?.token;
-
   if (!token) {
     return res.status(401).json({ message: 'Unauthorized Access! Token not found in cookies.' });
   }
@@ -54,7 +53,7 @@ async function run() {
     const database = client.db('User-Auth');
     const userCollection = database.collection('user-register');
 
-    // Signup api
+    // Signup API
     app.post('/signup', async (req, res) => {
       try {
         const { username, password, shops } = req.body;
@@ -88,13 +87,12 @@ async function run() {
 
         const newUser = {
           username,
-          password, 
+          password, // NOTE: Ideally hash this in real app
           shops,
           createdAt: new Date(),
         };
 
         await userCollection.insertOne(newUser);
-
         res.status(201).json({ message: 'User registered successfully!' });
       } catch (error) {
         console.error('Signup error:', error);
@@ -102,17 +100,17 @@ async function run() {
       }
     });
 
-    // Signin api
+    // Signin API
     app.post('/signin', async (req, res) => {
       try {
         const { username, password, rememberMe } = req.body;
+        const isProd = process.env.NODE_ENV === 'production';
 
         if (!username || !password) {
           return res.status(400).json({ message: 'Username and password are required.' });
         }
 
         const user = await userCollection.findOne({ username });
-
         if (!user) {
           return res.status(404).json({ message: 'User not found.' });
         }
@@ -133,7 +131,9 @@ async function run() {
 
         res.cookie('token', token, {
           httpOnly: true,
-          secure: true, 
+          secure: isProd,
+          sameSite: isProd ? 'none' : 'lax',
+          maxAge: rememberMe ? 7 * 24 * 60 * 60 * 1000 : 30 * 60 * 1000, // 7 days or 30 minutes
         });
 
         res.status(200).json({
@@ -149,15 +149,11 @@ async function run() {
       }
     });
 
-    // Get user info
+    // Get user
     app.get('/user', verifyJWT, async (req, res) => {
       try {
         const { username } = req.user;
-
-        const user = await userCollection.findOne(
-          { username },
-          { projection: { password: 0 } }
-        );
+        const user = await userCollection.findOne({ username }, { projection: { password: 0 } });
 
         if (!user) {
           return res.status(404).json({ message: 'User not found.' });
@@ -170,18 +166,17 @@ async function run() {
       }
     });
 
-    // Logout api
+    // Logout API
     app.post('/logout', (req, res) => {
+      const isProd = process.env.NODE_ENV === 'production';
       res.clearCookie('token', {
         httpOnly: true,
-        secure: false,
+        secure: isProd,
+        sameSite: isProd ? 'none' : 'lax',
       });
       res.status(200).json({ message: 'Logged out successfully.' });
     });
 
-    // Ping MongoDB
-    // await client.db('admin').command({ ping: 1 });
-    // console.log('Pinged your deployment. You successfully connected to MongoDB!');
   } finally {
     // await client.close();
   }
